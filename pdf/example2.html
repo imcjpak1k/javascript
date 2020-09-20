@@ -123,9 +123,11 @@
   <body class="logged-out env-production page-responsive">
 <!-- TEST tag -->
 <input type="button" id='htmltopdf' value="html to pdf">
-<div>
+<div style="display: block;">
   <!-- <canvas id="cvs" width="595" height="842"></canvas> -->
-  <canvas id="cvs" width="2480" height="3508"></canvas>
+  <!-- <canvas id="cvs" width="2480" height="3508"></canvas> -->
+  <!-- <canvas id='html_preview_canvas' width="2480" height="7016"></canvas> -->
+  <div id='html_preview_div'></div>
 </div>
 
 
@@ -744,7 +746,7 @@
 
 </div>
 
-  <div id="readme" class="Box md js-code-block-container Box--responsive">
+  <div id="readme" style="background-image: url('bgimg.jpg');" class="Box md js-code-block-container Box--responsive">
     <div class="Box-header d-flex flex-items-center flex-justify-between bg-white border-bottom-0">
       <h2 class="Box-title pr-3">
         README.md
@@ -1083,34 +1085,44 @@
         // readme
         // html2canvas(document.body).then(function(canvas) {
         html2canvas(document.getElementById('readme')).then(function(canvas) {
-          // 화면에서 확인
-          var _canvas = $('#cvs')[0]; //document.getElementById('myCanvas');
-          var context = _canvas.getContext('2d');
-          // load image from data url
-          var imageObj = new Image();
-          imageObj.onload = function() {
-            context.drawImage(this, 0, 0);
-          };
-          imageObj.src = canvas.toDataURL('image/png');
-
-
-
+          $('#html_preview_div').html(canvas);
 
           // PDF생성
             var imgData = canvas.toDataURL('image/png');
-            var imgWidth = 210;
-            var pageHeight = imgWidth * 1.414;
+            // var imgWidth = 210;
+            // var pageHeight = imgWidth * 1.414;
+            var imgWidth = 210; 
+            var pageHeight = 295;
             var imgHeight = canvas.height * imgWidth / canvas.width;
+            var heightLeft = imgHeight;
 
             var doc = new jsPDF({
-                // 'orientation': 'p',
-                // 'unit': 'mm',
-              //  'format': 'a4',
+              'orientation': 'p',   // portrait
+              'unit': 'mm',   // "pt" (points), "mm" (default), "cm", "in".
+              'format': 'a4', // 210, 297
               //  'base': 'https://image.zdnet.co.kr/2020/09/20/'
 
             });
 
-            doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            var position = 10; // give some top padding to first page
+
+            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+
+          while (heightLeft >= 0) {
+            position += heightLeft - imgHeight; // top padding for other pages
+            doc.addPage();
+            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+          }
+
+            // doc.addPage();
+            // doc.setPage(1);
+            // doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            // doc.addPage();
+            // doc.setPage(2);
+            // doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            // doc.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
             doc.save('sample_A4.pdf');
             console.log('Reached here?');
         });
