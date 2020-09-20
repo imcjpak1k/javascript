@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <p>정 교수의 연구는 뇌에서 면역 기능을 담당하고 있는 교세포들이 시냅스의 숫자가 유지되도록 조절하는 기능을 밝히고, 시냅스가 과도하게 제거되는 현상을 어떻게 방지할 수 있는지에 대한 것이다. 시냅스를 제거하는 교세포의 포식작용을 역으로 이용해 아밀로이드베타나 타우단백질을 직접적으로 제거할 수 있는 방법도 연구하고 있다.</p>
+    </div>
+    <div>
+        <img src="https://image.zdnet.co.kr/2020/09/20/de16f422b1c246c33a5cbced38e0f8c8.jpg" style="height:auto">
+    </div>
+
+
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+    
+    <script>
+        function fnSaveAsPdf() {
+            debugger
+            html2canvas(document.body).then(function(canvas) {
+               debugger
+                var imgData = canvas.toDataURL('image/png');
+                var imgWidth = 210;
+                var pageHeight = imgWidth * 1.414;
+                var imgHeight = canvas.height * imgWidth / canvas.width;
+
+                var doc = new jsPDF({
+                    'orientation': 'p',
+                    'unit': 'mm',
+                   'format': 'a4',
+                   'base': 'https://image.zdnet.co.kr/2020/09/20/'
+
+                });
+
+                doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                doc.save('sample_A4.pdf');
+                console.log('Reached here?');
+            });
+        }
+        fnSaveAsPdf();
+    </script>
+</body>
+</html>
